@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Clase 8 · Cripto y Fintech</title>
+<style>
+    :root{
+      --fondo:#eef2f6;
+      --blanco:#ffffff;
+      --texto:#1f2a37;
+      --texto-suave:#5b6676;
+      --borde:#d8e0e8;
+      --acento:#14a3dc;
+      --acento-oscuro:#0f7ea9;
+      --unidad:#00a651;
+      --unidad-suave:#eef8f1;
+      --amarillo:#fff2a8;
+      --oscuro:#0f2535;
+      --sombra:0 14px 40px rgba(15,35,55,.10);
+      --radio-xl:28px;
+    }
+
+    *{box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at top left, rgba(20,163,220,.10), transparent 28%),
+        radial-gradient(circle at top right, rgba(0,166,81,.08), transparent 22%),
+        var(--fondo);
+      font-family:"Aptos","Segoe UI",Arial,sans-serif;
+      color:var(--texto);
+    }
+
+    .clase-wrap{
+      width:min(1360px, calc(100% - 28px));
+      margin:16px auto 28px;
+      background:var(--blanco);
+      border-radius:32px;
+      overflow:hidden;
+      box-shadow:var(--sombra);
+      border:1px solid #e6edf3;
+    }
+
+    .hero{
+      position:relative;
+      min-height:420px;
+      padding:34px;
+      display:flex;
+      align-items:flex-end;
+      background:
+        radial-gradient(circle at 78% 22%, rgba(255,255,255,.18) 0 0.5rem, transparent .55rem),
+        radial-gradient(circle at 87% 44%, rgba(255,255,255,.14) 0 0.35rem, transparent .40rem),
+        linear-gradient(125deg, rgba(8,26,38,.96), rgba(20,163,220,.70));
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      inset:auto 0 0 0;
+      height:120px;
+      background:linear-gradient(to top, rgba(10,22,31,.28), transparent);
+      pointer-events:none;
+    }
+
+    .hero-panel{
+      position:relative;
+      z-index:1;
+      max-width:980px;
+      padding:24px 26px;
+      border-radius:24px;
+      color:#fff;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.24);
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      box-shadow:0 10px 30px rgba(0,0,0,.16);
+    }
+
+    .hero-kicker{
+      margin:0 0 10px;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      font-weight:800;
+      opacity:.95;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:clamp(34px, 5vw, 60px);
+      line-height:1.02;
+      letter-spacing:-1.3px;
+      font-weight:900;
+    }
+
+    .hero-sub{
+      margin:12px 0 0;
+      max-width:860px;
+      font-size:18px;
+      line-height:1.68;
+      color:#edf8ff;
+    }
+
+    .hero-authors{
+      margin:8px 0 0;
+      font-size:13px;
+      line-height:1.5;
+      color:#d9eef8;
+      letter-spacing:.2px;
+    }
+
+    .hero-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .hero-meta span{
+      display:inline-flex;
+      align-items:center;
+      padding:10px 15px;
+      border-radius:999px;
+      background:rgba(255,255,255,.92);
+      color:#173042;
+      font-size:12px;
+      font-weight:800;
+      box-shadow:0 3px 10px rgba(0,0,0,.10);
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:290px 1fr;
+      gap:22px;
+      padding:24px;
+      align-items:start;
+    }
+
+    .menu{
+      position:sticky;
+      top:16px;
+      background:linear-gradient(180deg,#f8fbfd,#f1f5f9);
+      border:1px solid var(--borde);
+      border-radius:24px;
+      padding:18px;
+    }
+
+    .menu h3{
+      margin:0 0 14px;
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      color:#3b4b5c;
+    }
+
+    .menu ul{
+      list-style:none;
+      padding:0;
+      margin:0;
+    }
+
+    .menu li{
+      margin-bottom:10px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:#fff;
+      border:1px solid #e3e8ee;
+      color:#314254;
+      font-size:14px;
+      line-height:1.35;
+      cursor:pointer;
+      transition:all .2s ease;
+      font-weight:700;
+    }
+
+    .menu li:hover{
+      transform:translateX(2px);
+      border-color:#c8dcea;
+      background:#fafeff;
+    }
+
+    .menu li.active{
+      background:var(--acento);
+      color:#fff;
+      border-color:var(--acento);
+    }
+
+    .main{
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+
+    .section{ display:none !important; }
+    .section.active{ display:block !important; }
+    .section.active.grid-2{ display:grid !important; }
+
+    .card{
+      background:#fff;
+      border:1px solid var(--borde);
+      border-radius:var(--radio-xl);
+      padding:26px;
+      overflow:hidden;
+    }
+
+    .card h2{
+      margin:0 0 16px;
+      font-size:31px;
+      line-height:1.08;
+      letter-spacing:-.7px;
+      color:var(--oscuro);
+    }
+
+    .card h3{
+      margin:0 0 12px;
+      font-size:22px;
+      line-height:1.2;
+      color:#16354a;
+    }
+
+    .card p{
+      margin:0 0 15px;
+      font-size:16px;
+      line-height:1.78;
+      color:var(--texto-suave);
+      text-align:justify;
+    }
+
+    .lead{
+      font-size:18px !important;
+      color:#405769 !important;
+    }
+
+    .destacado{
+      margin-top:18px;
+      padding:18px 20px;
+      border-left:6px solid var(--acento);
+      background:#eef7fb;
+      border-radius:16px;
+      color:#355645;
+      font-size:15px;
+      line-height:1.72;
+    }
+
+    .box{
+      margin:24px 0;
+      padding:18px 20px;
+      background:#f7fbfd;
+      border-left:4px solid #7bb9d4;
+      border-radius:14px;
+    }
+
+    .box.white{
+      background:#fcfdfe;
+      border:1px solid #e6eef2;
+      border-left:none;
+    }
+
+    .box-title{
+      font-size:14px;
+      font-weight:700;
+      color:#3f6d84;
+      text-transform:uppercase;
+      letter-spacing:.8px;
+      margin-bottom:8px;
+    }
+
+    .data-highlight{
+      margin:28px 0;
+      padding:22px 24px;
+      background:linear-gradient(135deg, #eef7fb 0%, #f7fbfd 100%);
+      border:1px solid #dbe7ee;
+      border-left:6px solid #7bb9d4;
+      border-radius:18px;
+      box-shadow:0 8px 18px rgba(0,0,0,.04);
+    }
+
+    .data-highlight p{
+      margin:0;
+      font-size:18px;
+      line-height:1.8;
+      color:#314550;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#f0f8fc;
+      border:1px solid #cfeaf5;
+      color:#16506b;
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .datos-clase{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .dato{
+      background:#f8fafc;
+      border:1px solid var(--borde);
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .dato .et{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+      color:#708093;
+      margin-bottom:8px;
+      font-weight:800;
+    }
+
+    .dato .va{
+      font-size:18px;
+      line-height:1.35;
+      font-weight:800;
+      color:#132a3c;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1.08fr .92fr;
+      gap:20px;
+    }
+
+    .acceso-box{
+      background:linear-gradient(180deg,#f7fbfd,#eef7fb);
+      border:1px solid #d7eaf3;
+      border-radius:20px;
+      padding:18px;
+    }
+
+    .class-link-card,
+    .resource-card{
+      position:relative;
+      display:block;
+      min-height:290px;
+      border-radius:22px;
+      overflow:hidden;
+      text-decoration:none;
+      box-shadow:0 14px 28px rgba(15,35,55,.12);
+      transition:transform .22s ease, box-shadow .22s ease;
+    }
+
+    .class-link-card{
+      background:
+        linear-gradient(rgba(11,34,48,.33), rgba(11,34,48,.48)),
+        url('https://images.unsplash.com/photo-1621761191319-c6fb62004040?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+    }
+
+    .resource-card{
+      background:
+        linear-gradient(rgba(11,34,48,.33), rgba(11,34,48,.48)),
+        url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+    }
+
+    .class-link-card:hover, .resource-card:hover{
+      transform:translateY(-3px);
+      box-shadow:0 18px 34px rgba(15,35,55,.18);
+    }
+
+    .link-overlay{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      gap:14px;
+      padding:26px;
+    }
+
+    .link-icon{
+      width:84px;
+      height:84px;
+      border-radius:50%;
+      background:rgba(255,255,255,.94);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:30px;
+      box-shadow:0 10px 24px rgba(0,0,0,.18);
+    }
+
+    .link-overlay h4{
+      margin:0;
+      font-size:24px;
+      line-height:1.2;
+      color:#fff;
+      text-shadow:0 2px 10px rgba(0,0,0,.20);
+    }
+
+    .link-overlay p{
+      margin:0;
+      color:#eff8fe;
+      max-width:390px;
+      font-size:15px;
+      line-height:1.65;
+      text-align:center;
+    }
+
+    .link-note{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:14px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#fff;
+      border:1px solid #d7eaf3;
+      color:#16506b;
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .pdf-actions{
+      margin-top:14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .pdf-button{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:#ffffff;
+      border:1px solid #d7eaf3;
+      color:#16506b;
+      font-size:13px;
+      font-weight:800;
+      text-decoration:none;
+      box-shadow:0 4px 10px rgba(15,35,55,.06);
+      transition:all .2s ease;
+    }
+
+    .pdf-button:hover{
+      background:#f0f8fc;
+      border-color:#b9dceb;
+      transform:translateY(-1px);
+    }
+
+    .idea-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-top:16px;
+    }
+
+    .idea{
+      background:linear-gradient(180deg,#fffdf3,#fff);
+      border:1px solid #f3e3a7;
+      border-radius:18px;
+      padding:18px;
+    }
+
+    .idea h4{
+      margin:0 0 10px;
+      font-size:18px;
+      color:#5a4700;
+    }
+
+    .idea p{
+      margin:0;
+      font-size:15px;
+      line-height:1.68;
+      color:#6a6040;
+    }
+
+
+    .imagen-representativa{
+      margin:22px 0 20px;
+      border-radius:24px;
+      overflow:hidden;
+      border:1px solid #d7eaf3;
+      background:#f7fbfd;
+      box-shadow:0 12px 26px rgba(15,35,55,.10);
+    }
+
+    .imagen-representativa svg{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:320px;
+      background:linear-gradient(135deg,#0f2535,#14a3dc);
+    }
+
+    .imagen-representativa figcaption{
+      margin:0;
+      padding:12px 16px;
+      font-size:13px;
+      line-height:1.55;
+      color:#5b6676;
+      background:#ffffff;
+      border-top:1px solid #e6eef2;
+    }
+
+    .bibliografia-lista p{ margin-bottom:10px; }
+    .bibliografia-lista ul{ margin:0; padding-left:22px; }
+    .bibliografia-lista li{ margin-bottom:10px; font-size:16px; line-height:1.72; color:var(--texto-suave); }
+
+    @media (max-width:1180px){
+      .layout{grid-template-columns:1fr;}
+      .menu{position:relative; top:0;}
+      .grid-2{grid-template-columns:1fr;}
+      .datos-clase{grid-template-columns:1fr;}
+      .idea-grid{grid-template-columns:1fr;}
+    }
+
+    @media (max-width:720px){
+      .clase-wrap{width:100%; margin:0; border-radius:0;}
+      .hero{padding:18px; min-height:360px;}
+      .hero-panel{padding:18px;}
+      .layout{padding:16px;}
+      .card{padding:18px; border-radius:22px;}
+      .card h2{font-size:25px;}
+      .hero-sub{font-size:16px;}
+      .class-link-card,.resource-card{min-height:230px;}
+    }
+  </style>
+</head>
+<body>
+<div class="clase-wrap">
+<header class="hero">
+<div class="hero-panel">
+<p class="hero-kicker">Clase 8 · Unidad I</p>
+<h1>Cripto y Fintech</h1>
+<p class="hero-sub">Finanzas digitales: dinero electrónico, criptomonedas y FinTech.</p>
+<p class="hero-authors">Sergio Paz y Linda Lopez, 2026</p>
+<div class="hero-meta">
+<span>Clase 8</span>
+<span>Unidad I</span>
+<span>Finanzas digitales</span>
+<span>Dinero electrónico</span>
+<span>Criptomonedas</span>
+<span>FinTech</span>
+</div>
+</div>
+</header>
+
+<div class="layout">
+<aside class="menu">
+<h3>Bloque de inicio</h3>
+<ul>
+<li data-target="presentacion">Presentación</li>
+<li data-target="acceso">Acceso a la clase</li>
+<li data-target="ideas">Ideas centrales</li>
+<li data-target="estado">Estado en la era digital</li>
+<li data-target="fundamentos">Innovación financiera</li>
+<li data-target="hacia-donde">¿Hacia dónde vamos?</li>
+<li data-target="cierre">Cierre</li>
+<li data-target="bibliografia">Bibliografía</li>
+</ul>
+</aside>
+
+<main class="main">
+
+<section class="card section" id="presentacion">
+<h2>Presentación de la clase</h2>
+<p class="lead">Para esta clase, y dentro de una línea de continuidad del curso, hemos elegido como tema central la innovación y los impactos acaecidos en el mundo del dinero, la inversión y la intermediación financiera.</p>
+<p>Esta elección responde a dos necesidades fundamentales: la primera es la relevancia decisiva de la innovación como el principal factor capaz de impulsar el desarrollo económico y la mejora de la calidad de vida de las personas en medio de la revolución digital.</p>
+<p>A esta altura, sabemos que las innovaciones disruptivas de la economía digital reducen drásticamente los costos de las transacciones y de intermediación, como los costos financieros, y que pueden ofrecerse al margen de marcos normativos y regulatorios que limitan la competencia en el mercado financiero.</p>
+<p>Por otra parte, la innovación se hace hoy más necesaria que nunca para afrontar los grandes retos y desafíos que tenemos por delante como la reducción de la desigualdad y la pobreza, la igualdad de oportunidades en materia de acceso al crédito, la importancia de la educación, la salud y la vivienda, el protagonismo del cambio climático y el cuidado del medio ambiente, la exposición actual del empleo y el crecimiento de la informalidad, entre otros.</p>
+
+
+<figure class="imagen-representativa" aria-label="Imagen representativa de finanzas digitales, criptoactivos y tecnologías financieras">
+<svg viewBox="0 0 1200 420" role="img" aria-labelledby="titulo-imagen desc-imagen" xmlns="http://www.w3.org/2000/svg">
+<title id="titulo-imagen">Finanzas digitales, criptomonedas y FinTech</title>
+<desc id="desc-imagen">Ilustración con billetera digital, nodos conectados, moneda cripto y gráficos de crecimiento.</desc>
+<defs>
+<linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+<stop offset="0%" stop-color="#0f2535"/>
+<stop offset="55%" stop-color="#126f96"/>
+<stop offset="100%" stop-color="#14a3dc"/>
+</linearGradient>
+<linearGradient id="g2" x1="0" x2="1">
+<stop offset="0%" stop-color="#ffffff" stop-opacity=".96"/>
+<stop offset="100%" stop-color="#e9f8ff" stop-opacity=".92"/>
+</linearGradient>
+<filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+<feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#071b28" flood-opacity=".28"/>
+</filter>
+</defs>
+<rect width="1200" height="420" fill="url(#g1)"/>
+<circle cx="1020" cy="80" r="160" fill="#ffffff" opacity=".08"/>
+<circle cx="180" cy="360" r="230" fill="#ffffff" opacity=".06"/>
+<g opacity=".40" stroke="#d9f5ff" stroke-width="3" fill="none">
+<path d="M90 110 C210 70 270 190 385 150 S585 75 690 155 880 245 1010 135 1110 80 1160 118"/>
+<path d="M70 286 C220 238 320 324 455 265 S675 180 810 238 980 335 1140 250"/>
+</g>
+<g fill="#e8f8ff" opacity=".85">
+<circle cx="150" cy="118" r="8"/><circle cx="386" cy="150" r="8"/><circle cx="690" cy="155" r="8"/><circle cx="1010" cy="135" r="8"/>
+<circle cx="220" cy="267" r="7"/><circle cx="455" cy="265" r="7"/><circle cx="810" cy="238" r="7"/><circle cx="1140" cy="250" r="7"/>
+</g>
+<g filter="url(#shadow)">
+<rect x="88" y="86" width="338" height="232" rx="34" fill="url(#g2)"/>
+<rect x="120" y="132" width="230" height="22" rx="11" fill="#bfe8f7"/>
+<rect x="120" y="174" width="170" height="18" rx="9" fill="#d8f1fa"/>
+<rect x="120" y="224" width="260" height="54" rx="18" fill="#14a3dc" opacity=".95"/>
+<circle cx="337" cy="251" r="18" fill="#fff2a8"/>
+<text x="142" y="258" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#ffffff">wallet digital</text>
+</g>
+<g filter="url(#shadow)">
+<circle cx="590" cy="205" r="96" fill="#fff2a8"/>
+<circle cx="590" cy="205" r="72" fill="none" stroke="#5a4700" stroke-width="10" opacity=".45"/>
+<text x="590" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="#5a4700">₿</text>
+</g>
+<g filter="url(#shadow)">
+<rect x="754" y="106" width="334" height="220" rx="34" fill="url(#g2)"/>
+<text x="795" y="158" font-family="Arial, sans-serif" font-size="28" font-weight="900" fill="#0f2535">FinTech</text>
+<text x="795" y="190" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#5b6676">dinero electrónico · cripto · datos</text>
+<rect x="800" y="246" width="38" height="48" rx="10" fill="#14a3dc" opacity=".55"/>
+<rect x="856" y="218" width="38" height="76" rx="10" fill="#14a3dc" opacity=".72"/>
+<rect x="912" y="190" width="38" height="104" rx="10" fill="#14a3dc" opacity=".90"/>
+<rect x="968" y="162" width="38" height="132" rx="10" fill="#00a651" opacity=".78"/>
+<path d="M790 286 L845 242 L895 255 L955 196 L1028 142" fill="none" stroke="#0f7ea9" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<g stroke="#ffffff" stroke-width="4" opacity=".60">
+<line x1="426" y1="205" x2="494" y2="205"/>
+<line x1="686" y1="205" x2="754" y2="205"/>
+</g>
+<g fill="#ffffff" opacity=".9">
+<circle cx="460" cy="205" r="8"/><circle cx="720" cy="205" r="8"/>
+</g>
+</svg>
+<figcaption>Imagen representativa de la clase: finanzas digitales, criptoactivos, billeteras virtuales y tecnologías financieras.</figcaption>
+</figure>
+
+<div class="datos-clase">
+<div class="dato"><div class="et">Tema central</div><div class="va">Innovación financiera</div></div>
+<div class="dato"><div class="et">Eje de análisis</div><div class="va">Cripto, fintech e inclusión</div></div>
+<div class="dato"><div class="et">Bibliografía base</div><div class="va">Paz, 2021</div></div>
+</div>
+
+<div class="destacado">El contenido de la clase aborda las finanzas digitales: dinero electrónico, criptomonedas y FinTech, en el marco de la revolución digital y sus efectos sobre la intermediación financiera.</div>
+
+<div class="chips">
+<span class="chip">Finanzas digitales</span>
+<span class="chip">Criptomonedas</span>
+<span class="chip">FinTech</span>
+<span class="chip">Inclusión financiera</span>
+<span class="chip">Datos</span>
+</div>
+</section>
+
+<section class="grid-2 section" id="acceso">
+<section class="card acceso-box">
+<h3>Acceso a la clase</h3>
+<a aria-label="Abrir enlace de la clase 8" class="class-link-card" href="clase8.html" rel="noopener noreferrer" target="_blank">
+<div class="link-overlay">
+<div class="link-icon">↗</div>
+<h4>Ingresar al contenido de la clase</h4>
+<p>Accedé al recurso completo de la clase 8. Se abrirá en una nueva pestaña.</p>
+</div>
+</a>
+<div class="link-note">GitHub Pages · Clase 8</div>
+<div class="pdf-actions">
+<a class="pdf-button" href="clase8.html" rel="noopener noreferrer" target="_blank">Abrir clase 8</a>
+</div>
+</section>
+
+<section class="card acceso-box">
+<h3>Versión imprimible</h3>
+<a aria-label="Descargar PDF de la clase 8" class="resource-card" href="clase8.pdf" rel="noopener noreferrer" target="_blank">
+<div class="link-overlay">
+<div class="link-icon">↓</div>
+<h4>Descargar PDF de la clase</h4>
+<p>Accedé a la versión imprimible de la clase 8. Se abrirá en una nueva pestaña.</p>
+</div>
+</a>
+<div class="link-note">GitHub Pages · PDF</div>
+<div class="pdf-actions">
+<a class="pdf-button" href="clase8.pdf" rel="noopener noreferrer" target="_blank">Descargar versión imprimible en PDF</a>
+</div>
+</section>
+</section>
+
+<section class="card section" id="ideas">
+<h2>Ideas centrales de la clase</h2>
+<div class="idea-grid">
+<article class="idea">
+<h4>1. La innovación financiera reordena prácticas cotidianas</h4>
+<p>La revolución tecnológica modifica los hábitos vinculados con el manejo del dinero, el ahorro, la inversión y la planificación financiera.</p>
+</article>
+<article class="idea">
+<h4>2. Las criptomonedas desafían la regulación pública</h4>
+<p>La expansión de los criptoactivos plantea interrogantes fiscales, tributarios y regulatorios para los Estados.</p>
+</article>
+<article class="idea">
+<h4>3. Las fintech pueden ampliar la inclusión financiera</h4>
+<p>Las finanzas digitales ofrecen nuevas vías de acceso a servicios financieros para personas, emprendimientos y sectores excluidos.</p>
+</article>
+<article class="idea">
+<h4>4. Los datos son un activo competitivo</h4>
+<p>En los mercados digitales, la acumulación y el uso de datos pueden convertirse en una ventaja para las empresas consolidadas y en una barrera para nuevos actores.</p>
+</article>
+</div>
+<div class="box">
+<div class="box-title">Idea articuladora</div>
+<p>El crecimiento de las finanzas digitales abre oportunidades de inclusión, innovación y reducción de costos, pero también introduce desafíos vinculados con la regulación, la concentración, la competencia y el uso de datos.</p>
+</div>
+</section>
+
+<section class="card section" id="estado">
+<h2>1. Estado en la era digital</h2>
+<p>Vivimos en medio de la revolución tecnológica más disruptiva que hayamos conocido. Este fenómeno está cambiando los hábitos y los comportamientos de las personas, en todos los ámbitos de la vida, inclusivo los relacionados al manejo del dinero, el ahorro, la inversión y la planificación financiera.</p>
+<p>Los autores especializados en temas de finanzas indican que los intermediarios financieros proveen instrumentos para favorecer los impulsos que actúan para aumentar la inversión y el crecimiento económico.</p>
+
+<div class="data-highlight">
+<p>Suele haber fuertes indicios del poder que tiene el nivel de desarrollo financiero sobre el crecimiento económico por su fuerza para promocionar la acumulación de capital y promover el cambio tecnológico.</p>
+</div>
+
+<p>El primer paso que tenemos por delante sería definir a la innovación en nuestro ámbito, pero resulta extremadamente difícil conceptualizarla así. Para ello, Schumpeter, el gran economista que situó a innovación en el centro del debate económico, ha distinguido a la invención, que sería la manifestación de una nueva idea o un hecho antes no conocido, y la innovación, que sería la aplicación exitosa de esas ideas (Schumpeter, 1934).</p>
+
+<div class="data-highlight">
+<p>La banca, y toda la industria de la intermediación financiera en general, desarrollan funciones de la máxima importancia para el desarrollo económico y la vida diaria de las personas.</p>
+</div>
+
+<p>A pesar que hablamos de criptomonedas, billeteras virtuales, banca online, pagos digitales, ciertamente, la moneda y la banca no ha experimentado una transformación comparable a la de otras industrias basadas en la información como la de la música y el entretenimiento. No obstante, en las últimas décadas, los bancos han sido usuarios muy importantes de las tecnologías digitales para, primero, reducir costes y generar ganancias de productividad. Y, en segundo lugar, desarrollar canales alternativos a la oficina física y convencional.</p>
+<p>En ese sentido, la aparición de monedas virtuales ha transformado a la moneda y la banca, son pilares del sistema capitalista. Las monedas virtuales no se consideran similares a la moneda emitida por los gobiernos en la mayoría de los países, ya que no se tratan de la moneda oficial y soberana de curso legal.</p>
+<p>Las monedas virtuales no se consideran moneda de curso legal y no tienen el mismo estatus legal que el dinero que emite la autoridad monetaria de cada país. Sin embargo, son aceptadas por individuos y organizaciones económicas como un medio de intercambio, para fijar sus precios, acumular riqueza y ser transferida o almacenada electrónicamente. Resultando, por momentos, engañoso el nombre de moneda.</p>
+<p>Entre las monedas virtuales las más difundidas son las criptomonedas, que incluyen al muy conocido Bitcoin, que se presentan al mundo con una proclama anarco-capitalista, pretendiendo ser más estables y garantes de riqueza; aunque su volatilidad y las perdidas que genera haga que aún no haya cumplido con la promesa.</p>
+<p>Las criptomonedas, o en terminos más generales los critoactivos, han experimentado una evolución notable desde la introducción de Bitcoin en 2009. El Bitcoin fue concebido inicialmente concebido como una moneda digital descentralizada y sin intervención estatal, abriendo el camino para una nueva generación de activos digitales.</p>
+<p>En otro orden, la utilización de las criptomonedas plantea desafíos para los responsables de formulación de la política económica en una amplia gama de áreas y esferas de la vida pública.</p>
+<p>La rápida expansión de las criptomonedas, con su naturaleza digital y su estructura descentralizada, han desafiado a cualquier propuesta de un marco regulatorio férreo e integral por parte de las autoridades gubernamentales. La falta de una regulación consistente y extendida ha generado inconsistencias en la implementación y monitoreo por parte de las agencias gubernamentales competentes, sumado a una evaluación muy acotada acerca de las transacciones de criptomonedas plausibles de tener efectos fiscales.</p>
+
+<div class="data-highlight">
+<p>El uso comercial y el nivel de capitalización de los mercados de activos cripto han evolucionando rápidamente, lo que plantea desafíos para la gestión pública fiscal y tributaria.</p>
+</div>
+
+<p>Como resultado, cabe destacar la importancia de comprender el funcionamiento de estas monedas virtuales y sus tecnologías subyacentes, permitiendo tener así un panorama más claro de los desafíos por venir, aunque la experiencia reciente en la economía digital demuestra que no es una fácil tarea.</p>
+</section>
+
+<section class="card section" id="fundamentos">
+<h2>2. Fundamentos de la innovación financiera en la era digital</h2>
+<p>La economía digital y la IA impactan en la economía, la moneda y la banca. Actualmente, las instituciones e instrumentos financieros que han sido sometidas a un profundo cambio por obra de la revolución digital y que se expresan en el mundo cripto, las apps de pagos digitales, las billereras virtuales y las plataformas de inversión online tienen la potencialidad de mostrarse como palancas del desarrollo financiero.</p>
+<p>Según Levine (1997) el desarrollo financiero no se limita a la existencia de un sistema financiero extenso y robusto, sino que también implica la capacidad de adaptarse a las necesidades cambiantes de la economía. Siguiendo a este autor, un sistema financiero desarrollado debe ser capaz de: a) movilizar el ahorro de manera eficiente, transformando los ahorros de los individuos en inversiones productivas; b) facilitar la inversión, brindando un acceso al capital a las empresas y emprendimientos para financiar sus proyectos; c) administrar el riesgo, ofreciendo instrumentos que protegerse contra eventos repentinos y adversos; d) promover la inclusión financiera, haciendo que toda la población tenga acceso a servicios financieros básicos.</p>
+<p>De esta forma, las innovaciones y resultados obtenidos por el proceso de transformación digital de la banca y las intermediarias financieras darían como resultado poder actuar sobre:</p>
+<div class="box">
+<div class="box-title">Aportes del proceso de transformación digital</div>
+<p>La democratización del acceso a la inversión; la profundización del mercado financiero; la promoción del ahorro interno y su canalización hacia proyectos de inversión a largo plazo; la estabilización del mercado financiero; la gestión profesional; la expansión de la educación financiera; la inversión en sectores estratégicos de la economía; y la diversificación del riesgo.</p>
+</div>
+</section>
+
+<section class="card section" id="hacia-donde">
+<h2>3. ¿Hacia dónde vamos?</h2>
+<p>Uno de los primeros resultados de la revolución digital es su contribución a la intermediación financiera. Actualmente, el conjunto de actores del sistema financiero es un cuadro complejo y dinámico compuesto por diversos sujetos que interactúan para facilitar la inversión, el consumo y el ahorro en un abanico extenso de mercados, sectores, instituciones e instrumentos financieros.</p>
+<p>Siguiendo a Mankiw (2014), la intermediación financiera implica la creación de instrumentos financieros y mercados con el objetivo de transferir de fondos entre agentes económicos con diferentes necesidades de liquidez y tolerancia al riesgo.</p>
+<p>Otra de las contribuciones más reconocidas por las innovaciones digitales es la inclusión financiera de agentes económicos pequeños. La inclusión financiera se refiere al acceso que tienen las personas y las empresas a diversos productos y servicios financieros útiles y asequibles que satisfacen sus necesidades. (Banco Mundial, 2024). De hecho, los distintos organismos económicos internacionales, junto al Banco Mundial, comprometidos con este tópico promueven la idea que la inclusión financiera es un elemento que facilita la consecución de 7 de los 17 Objetivos de Desarrollo Sostenible.</p>
+<p>El auge de las finanzas digitales y la actuación de las fintech influyen positivamente en la inclusión financiera al resolver varias barreras a la inclusión financiera, con potencial para la reducir desigualdad, estimular el crecimiento económico y contribuir a los Objetivos de Desarrollo Sostenible (Arner et al., 2020).</p>
+<p>En ese sentido, estamos llamados a reflexionar sobre este proceso de transformación que estamos viviendo, en tanto existe acuerdo entre los especialistas en que los países en desarrollo como Argentina ofrecen oportunidades históricas sin igual. Primero, porque en estos países se va a concentrar en las próximas décadas la mayor parte del crecimiento mundial. Segundo, porque solo 1/5 de la población de todo el mundo, en la actualidad, está formalizada como usuaria de los bancos, y si sumamos al ecosistema a todas las plataformas digitales y fintech existen más de 2.000 millones de personas que no tienen acceso a los servicios financieros. A pesar que la tecnología actual permite articular sus modos y prácticas con servicios financieros a través de los teléfonos móviles.</p>
+<p>Las instituciones financieras dedicadas al otorgamiento de microcréditos como las fintech, aparecen sirviendo a segmentos de la población que enfrentan la exclusión financiera. Buscando generar finanzas más inclusivas adoptan tecnologías innovadoras y varias herramientas digitales para facilitar el acceso y la interacción de los clientes con los servicios financieros.</p>
+
+<div class="data-highlight">
+<p>Las fintech son el ícono de la tecnologías financiera en el marco de la revolución digital, abrazando a una amplia gama de agentes que van desde emprendedores aspirantes y existentes hasta las Pymes y agricultores, o incluso personas en con dificultades financieras y personas con bajos ingresos sin reputación crediticia.</p>
+</div>
+
+<p>En general, la renuencia de la banca comercial tradicional a proporcionar préstamos o servicios financieros genera segmentos financieramente excluidos, siendo atendidos por las instituciones financieras de microcrédito. A menudo se trata de microcréditos empresariales que pueden utilizarse para desarrollar o expandir negocios pequeños y en expansión, microcréditos personales para mejorar la calidad de vida de las personas o generar ingresos adicionales, el desarrollo de microseguros para bienes y activos no alcanzados por la industria de los seguros convencionales y los servicios no financieros dedicados a educar sobre servicios financieros y desarrollo empresarial.</p>
+<p>En poco tiempo, las fintech exhiben propuestas de acción muy diversas que van desde proporcionar herramientas de gestión financiera para los emprendimientos y las Pymes pequeñas y familiares hasta conceder préstamos empresariales o brindar asesoramiento financiero. Pero también atiende a personas en dificultades financieras debido a deudas o bajos ingresos, u ofrece soluciones tecnológicas a las instituciones financieras para mejorar la experiencia de usuario.</p>
+<p>Ya transcurridos algunos años, las innovaciones que se han producido han generado importantes ventajas para los consumidores en muchos mercados financieros como la bajada de precios, una mayor accesibilidad, más variedad de canales y nuevos productos financieros (tarjetas, créditos, puntos de cobro, etc.). Pero también se han detectado algunos aspectos preocupantes en materia de competencia en muchos mercados digitales por acción de las grandes plataformas digitales de pago. Estas preocupaciones apuntan a los efectos que tienen sobre la presión a un descenso del nivel de competencia y el incremento de la concentración.</p>
+<p>Las plataformas digitales presentan efectos de red multiplataforma, lo cual significa que las decisiones de una empresa en un lado del mercado (por ejemplo, publicitar un producto o tener una estrategia determinada en materia de precios) la afectan en otro lado (por ejemplo, determinando el sistema de cobro). Estos efectos de red pueden generar poder de mercado y amplificar las consecuencias de la baja competencia. Así se configuran también modelos de negocio de conglomerado, que influyen de manera importante en los mercados digitales, a la par que crece la importancia de ecosistemas digitales de productos interconectados (OCDE, 2022).</p>
+
+<div class="data-highlight">
+<p>En este contexto de economías de red y modelos de conglomerado, los datos son un elemento central de muchos mercados digitales, que se presentan como un activo competitivo para las empresas digitales y, por lo tanto, un posible obstáculo a la entrada para nuevos aspirantes.</p>
+</div>
+
+<p>Actualmente, observamos a empresas financieras digitales ofreciendo y distribuyendo otros servicios no financieros, basados en la información captada e incorporando las contribuciones que realizan los propios usuarios. Esto produce que estén en condiciones de otorgar un acceso universal y a un coste muy reducido de todo tipo de servicios relacionados con la información extraída y analizada por las plataformas digitales.</p>
+</section>
+
+<section class="card section" id="cierre">
+<h2>Conclusiones</h2>
+<p>La tecnología para hacer todo esto ya existe y esta al alcance de casi todos y mejora cada día. Pero aún hay porciones enteras que no acceden a servicios financieros. Aquí nuevamente la brecha, que tanto advertimos, aparece con fuerza.</p>
+<p>El papel de los nuevos modelos de negocio financieros con sus prácticas e instrumentos innovadores (cripto, wallets, apps de inversión, banca online) apuntala la inclusión financiera en nuestros países. Esto lleva la mirada rápidamente al acceso a los emprendimientos y a la población excluida de los servicios financieros, la educación financiera para canalizar el ahorro y diversificar las inversiones y el impacto de la tecnología financiera por la acción de las instituciones de microfinanzas y las fintech.</p>
+<p>En este espacio se explica el crecimiento de nuevas opciones mientras se configura un nuevo panorama de competencia en la industria financiera, en la que emergieron y emergerán nuevos asistentes como las fintech y las empresas procedentes de Internet, con gran reconocimiento de marca y validez social, mientras los bancos con mayores regulaciones, sistemas obsoletos y costosas redes físicas de distribución se esfuerzan por articular modelos más eficientes de oferta de servicios financieros.</p>
+</section>
+
+<section class="card section bibliografia-lista" id="bibliografia">
+<h2>Bibliografía y recursos</h2>
+<div class="box white">
+<div class="box-title">Bibliografía obligatoria</div>
+<p>Paz, S. (2021). <em>Economía digital: El futuro ya llegó</em>. (Selección: El rey ha muerto, viva el rey; Te faltan 5 pal bitcoin; Punto y banca online).</p>
+</div>
+<div class="box white">
+<div class="box-title">Bibliografía complementaria</div>
+<ul>
+<li>Arner, D. W., Buckley, R. P., Zetzsche, D. A., &amp; Veidt, R. (2020), Sustainability, FinTech and Financial Inclusion. <em>European Business Organization Law Review</em>, 21(1), 7-35.</li>
+<li>Levine, R. (1997), Financial development and economic growth, <em>Journal of Economic Literature</em>, Vol. 35, N°2, pp. 688-726.</li>
+<li>Mankiw, N. (2014), <em>Macroeconomía</em>. Cengage Learning.</li>
+</ul>
+</div>
+</section>
+
+</main>
+</div>
+</div>
+
+<script>
+const menuItems = document.querySelectorAll('.menu li');
+const sections = document.querySelectorAll('.section');
+
+function showSection(id, item){
+  sections.forEach(section => section.classList.remove('active'));
+  menuItems.forEach(menuItem => menuItem.classList.remove('active'));
+  const target = document.getElementById(id);
+  if(target){
+    target.classList.add('active');
+    item.classList.add('active');
+  }
+}
+
+menuItems.forEach(item => {
+  item.addEventListener('click', () => showSection(item.dataset.target, item));
+});
+
+if(menuItems.length){ showSection(menuItems[0].dataset.target, menuItems[0]); }
+</script>
+</body>
+</html>
